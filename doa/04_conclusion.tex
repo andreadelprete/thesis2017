@@ -1,11 +1,11 @@
 \section{Conclusion}
 
-This paper has presented the technologies that have been developed in the FiaD
+This chapter presented the technologies that have been developed in the FiaD
 project to augment collaborative robot manipulators with dynamic obstacle
 avoidance. All these technologies: a proximity-sensing robot skin, a reactive
 path planning solution and a robot motion control strategy, have been validated
 in laboratory prototypes. Also, a preliminary prototype of an integrated
-solution based on these technologies has been tested in simulation. With the current promising results, we are currently working on a robotic system prototype (based on the setup in Fig. \ref{fig:TUDSetup}) that will be demonstrated in a real collaborative pick-and-place application (TRL 7 \cite{TRL}) at the RoboBusiness Europe 2017 (RBE17) conference.
+solution based on these technologies has been tested in simulation. With the current promising results, we are currently working on a robotic system prototype (based on the setup in Fig. \ref{fig:TUDSetup})
 
 % work in progress%=CITE SUPPORTING EVIDENCE THAT IT WORKS=.
 The integration and installation of advanced functionalities such as the dynamic
@@ -25,5 +25,4 @@ to deploy. As a part of the FiaD project, a Robot deployment toolbox has been de
 The deployment tools will also be evaluated on the RBE17 prototype.
 
 
-The paper proposed a creative method to execute a trajectory robust to run-time inequality constraints without compromising on the final goal of a scenario. The method uses 'Stack of Tasks', a jacobian control framework employing the state of the art HQP solver for both equality and inequality constraints. The creativity lies on the way the hierarchical nature of the solver and flexible task definition of the framework is exploited to combine an intuitive main goal definition and reactive trajectory execution to realize a scenario successfully robustly. Experiments were done to verify the validity of the method on a PR2 robot with a skin sensor(in simulation) mounted on its forearm. Future work will focus on generalizing the method for various kind of tasks and extending the framework to systematically design tasks to be added in the controller stack specific to possible desired scenarios. The methodology has a significant potential to 
-be used for a robot setup with full body skin sensors.
+% The paper proposed a creative method to execute a trajectory robust to run-time inequality constraints without compromising on the final goal of a scenario. The method uses 'Stack of Tasks', a jacobian control framework employing the state of the art HQP solver for both equality and inequality constraints. The creativity lies on the way the hierarchical nature of the solver and flexible task definition of the framework is exploited to combine an intuitive main goal definition and reactive trajectory execution to realize a scenario successfully robustly. Experiments were done to verify the validity of the method on a PR2 robot with a skin sensor(in simulation) mounted on its forearm. Future work will focus on generalizing the method for various kind of tasks and extending the framework to systematically design tasks to be added in the controller stack specific to possible desired scenarios. The methodology has a significant potential to be used for a robot setup with full body skin sensors.

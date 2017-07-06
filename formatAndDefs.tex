@@ -149,7 +149,7 @@ urlcolor=linkcol %couleur des liens pour les url
 \fancyhead[LE,RO]{\bfseries\thepage}    % Page number (boldface) in left on even
 % pages and right on odd pages
 \fancyhead[RE]{\bfseries\nouppercase{\leftmark}}      % Chapter in the right on even pages
-\fancyhead[LO]{\bfseries\nouppercase{\leftmark}}     % Section in the left on odd pages
+\fancyhead[LO]{\bfseries\nouppercase{\rightmark}}     % Section in the left on odd pages
 
 \let\headruleORIG\headrule
 \renewcommand{\headrule}{\color{black} \headruleORIG}
@@ -252,5 +252,27 @@ urlcolor=linkcol %couleur des liens pour les url
 \newcommand\explainmore[1]{\textcolor{red}{#1}}
 \newcommand\refrephrase[1]{\textcolor{yellow}{#1}}
 \newcommand\donerephrasing[1]{\textcolor{green}{#1}}
+
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+
 \begin{document}
 

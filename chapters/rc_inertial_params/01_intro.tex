@@ -1,0 +1,18 @@
+
+Model-based control has become more and more popular in the legged robots community in the last ten years. 
+The key idea is to exploit a model of the system to compute precise motor commands that result in the desired motion.
+This allows to improve the quality of the motion tracking, while using lower gains, leading so to higher compliance.
+However, the main flaw of this approach is typically its lack of robustness to modeling errors. In this chapter we focus on the robustness of inverse-dynamics control to errors in the inertial parameters of the robot. We assume these parameters to be known, but only with a certain accuracy. We then propose a computationally-efficient optimization-based controller that ensures the balance of the robot despite these uncertainties. We used the proposed controller in simulation to perform different reaching tasks with the HRP-2 humanoid robot, in the presence of various modeling errors.Comparisons against a standard inverse-dynamics controller through hundreds of simulations show the superiority of the proposed controller in ensuring the robot balance.
+\section{Introduction}
+The problem of balancing for real legged robots is still a challenge for the robotics community.
+Although our understanding of this problem has remarkably improved during the last 15 years, the robustness of the state-of-the-art control algorithms is far from satisfactory.
+For instance, during the recent DARPA Robotics Challenge Finals~\cite{Pratt2015}, all legged robots have moved extremely cautiously, and, despite that, sometimes they could not avoid falling.
+Another striking fact is the difference between what robots can do in simulation where they easily perform extremely dynamics tasks and what they can do in the real world where they struggle to execute slow movements in structured environments.
+The gap between simulation and real world can be explained through countless unmodeled uncertainties affecting these systems, such as poor torque control, model uncertainties, sensor noises and delays.
+In recent work of ~\cite{DelPrete2015b}, an optimization-based controller tries to ensure the satisfaction of the physical constraints of the robot (force friction cones, joint acceleration limits and torque limits) despite errors in the joint torque tracking. In this work we move along the same line, designing a \emph{robust} controller that can balance a legged robot despite bounded errors in its inertial parameters.
+
+
+
+
+The chapter starts with a brief discussion about various control methodologies used in humanoid robots (Section~\ref{sec:control_methods}). Section~\ref{sec:soa_robust} presents robustness related work in optimization based control. In Section~\ref{sec:tsid} we model the uncertainty in the inertial parameters of the robot through polytopes. Then we present the Task-Space Inverse Dynamics(TSID) controller with capture-point constraints~\cite{Ramos2014a} to ensure the balance of the robot in case of no modeling errors. Section~\ref{sec:robustness} presents an extension of the standard capture-point inequalities that is robust to errors in the inertial parameters.We first formulate the associated robust optimization problem, and then use standard robust-optimization techniques to reformulate it in a tractable form. (Section~\ref{sec:tests}) presents statistical results that compare in simulation the standard and the robust controller in a reaching task with the humanoid robot HRP-2. Regardless of the simulation conditions, our results empirically demonstrate the superiority of the proposed robust controller with respect to standard TSID. Finally, Section~\ref{sec:conclusions} draws the conclusions and discusses the future work.
+

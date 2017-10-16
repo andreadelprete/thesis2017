@@ -1,0 +1,27 @@
+
+
+\ifdefined\included
+\else
+\documentclass[a4paper,11pt,twoside]{StyleThese}
+\include{formatAndDefs}
+\sloppy
+\begin{document}
+\setcounter{chapter}{0} %% Numéro du chapitre précédent ;)
+\fi
+
+\chapter{Collision Avoidance Framework}
+\label{chapter:framework}
+Current collaborative robot arms allow more flexible work cells, where they safely collaborate with human operators augmenting productivity in tasks difficult for traditional automation. However, current robotic solutions for safe interaction simply stops the robot motion when a collision is detected. This reduces the productivity in an operational setup in which unintended, safe collisions can happen often. Active contact evasion by the robot arm is desired so that the production process continues despite regular interferences and path obstructions without compromising on the human safety. In Factory-in-a-day project, technologies to avoid collisions dynamically in a manipulation setup have been developed which includes proximity-measuring robot skin, reactive path-planning \& motion control components to generate collision free motions in a real time industrial setup. These technologies have been integrated into a unifying framework for dynamic collision avoidance which is successfully tested both in simulation and laboratory set-ups. The primary contribution of this thesis is a robust reactive control mechanism using the state of the art kinematic Hierarchical Quadratic Programming(HQP) solver to handle safety constraints determined by proximity skin information. This chapter makes an attempt to summarize the various developments relevant to collision avoidance, presents the proposed framework developed in the Factory-in-a-day project with a special focus on the reactive control components.
+\input{chapters/doa/01_intro}
+\input{chapters/doa/01_soa}
+\input{chapters/doa/02_framework}
+\input{chapters/doa/02_sot}
+\input{chapters/doa/03_tests}
+\input{chapters/doa/04_conclusion}
+
+\ifdefined\included
+\else
+\bibliographystyle{acm}
+\bibliography{These}
+\end{document}
+\fi

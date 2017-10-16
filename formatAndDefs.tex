@@ -7,6 +7,7 @@
 \usepackage{lmodern}
 \usepackage{tabularx}
 %\usepackage{tabular}
+\usepackage{float}
 \usepackage{multirow}
 
 \usepackage{hhline}
@@ -94,8 +95,8 @@
 \hypersetup
 {
 bookmarksopen=true,
-pdftitle="Évaluation de la sécurité des équipements grand public connectés à Internet",
-pdfauthor="Yann BACHY", %auteur du document
+pdftitle="Handling Uncertainty and Variability in Robot Control",
+pdfauthor="Nirmal GIFTSUN", %auteur du document
 pdfsubject="Thèse", %sujet du document
 %pdftoolbar=false, %barre d'outils non visible
 pdfmenubar=true, %barre de menu visible
@@ -165,7 +166,7 @@ urlcolor=linkcol %couleur des liens pour les url
 
 %\usepackage{MyAlgorithm}
 %\usepackage[noend]{MyAlgorithmic}
-\usepackage[ED=MITT - STICRT, Ets=INSA]{tlsflyleaf}
+\usepackage[ED=EDSYS-Robo, Ets=INSA]{tlsflyleaf}
 %%% Clear Header %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Clear Header Style on the Last Empty Odd pages
 \makeatletter
@@ -246,8 +247,9 @@ urlcolor=linkcol %couleur des liens pour les url
 \usepackage{tikz}
 \newcommand{\tikzcircle}[2][red,fill=red]{\tikz[baseline=-0.5ex]\draw[#1,radius=#2] (0,0) circle ;}%
 \definecolor{turquoise}{rgb}{0.28 1 0.92}
-\input{rc_inertial_params/math_commands.tex}
+\input{chapters/rc_inertial_params/math_commands.tex}
 \usepackage{epstopdf}
+\usepackage[export]{adjustbox}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \newcommand\explainmore[1]{\textcolor{red}{#1}}
 \newcommand\refrephrase[1]{\textcolor{yellow}{#1}}
@@ -272,7 +274,4 @@ urlcolor=linkcol %couleur des liens pour les url
 \providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
 \providecommand{\DIFdelendFL}{} %DIF PREAMBLE
 %DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
-
-
-\begin{document}
 

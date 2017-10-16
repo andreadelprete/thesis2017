@@ -1,0 +1,215 @@
+
+\section{Robustness in Humanoid Robots}
+\label{sec:soa_robust}
+Even though the problem of robustness is long-standing and well-identified, it remains largely unanswered for legged robots. 
+Some approaches focus exclusively on the stability of the system rather than on the feasibility of the trajectories.
+For instance, adaptive control~\cite{Kelly1989} and time-delay estimation~\cite{Jin2008} try to estimate and compensate online for the major errors between nominal and real dynamic model.
+Virtual model control~\cite{Pratt} does not rely on the dynamic model of the robot, which ensures robustness to errors in the inertial parameters~\cite{dietrich2013multi}. 
+The main issue of these schemes is that they do not consider inequality constraints, which makes it hard to implement them on real systems, given the large number of bounds to which they are subject.
+
+Other approaches are based on hand-tunable heuristics. For instance, a common heuristic in Task-Space Inverse Dynamics (TSID)~\cite{DelPrete2014c} which we adopt as well is to use a secondary task to keep the robot posture close to a reference one, in order to keep the movements far from the joint limits. 
+Similarly, to avoid slipping/tipping, it was proposed to minimize the contact moments and the tangential contact forces in the null space of the main motion task~\cite{Righetti2010}. 
+Yet another common trick during locomotion is to maintain the center of pressure close to the center of the foot~\cite{Kajita2003}.
+The robotics literature is filled with these kinds of heuristics, which often are the main reason behind the successful implementations on real platforms.
+However, these heuristics can not ensure feasibility in the presence of any significant uncertainty and needs ad-hoc tuning depending on the situation.
+
+Finally, another class of works which includes this work makes use of robust optimization techniques to formulate control and planning problems.
+Mordatch et al.~\cite{Mordatch2015} considered several perturbed models of a humanoid robot to plan offline a trajectory that is robust to uncertainties, reporting success rate between 80\% and 95\% on a real platform. 
+Another recent work~\cite{Luo} has combined robust and time-scaling optimization to plan trajectories that are robust to bounded errors in friction coefficients and joint accelerations, whose magnitude can be estimated online through iterative learning.
+Nguyen and Sreenath~\cite{Nguyen} have recently exploited control Lyapunov functions and Quadratic Programs (QPs) to ensure stability despite bounded uncertainties in the linearized system dynamics. 
+
+Contrary to~\cite{Mordatch2015,Nguyen}, the uncertainties modeled in this work affect the parameters of the system, so they could be identified using set-membership identification techniques~\cite{Ramdani2005}.
+The main contribution in this work is a novel formulation of the capture-point balance constraints, which can be included in the Task-Space Inverse Dynamics optimization problem to balance the robot despite bounded uncertainties in its inertial parameters.
+Contrary to previous approaches that dealt with uncertainties to inertial parameters, our approach allows us to include inequality constraints in the problem formulation.
+Thanks to this we can thus account for all the constraints to which legged robots are subject, ensuring the feasibility of the resulting trajectories.
+
+
+\section{Task-Space Inverse Dynamics with Capture-Point Balance Constraints}
+\label{sec:tsid}
+To design a controller that is robust to errors in the inertial parameters of the robot we have first to understand how these errors affect the control action.
+In this section we define the inertial parameters and we present a standard Task-Space Inverse Dynamics controller, which includes balance constraints. 
+Throughout the presentation we explicitly show the dependency of the terms on the inertial parameters, while we omit the dependency on the robot configuration $q$ and velocities $v$ because they are constant values at each time step.
+
+\subsection{Inertial Parameters}
+We define the vector containing the 10 inertial parameters of link $i$ as:
+\begin{equation*}
+\phi_i = (m_i, m_i {}^i c_i, I_i^{xx}, I_i^{xy}, I_i^{xz}, I_i^{yy}, I_i^{yz}, I_i^{zz} ),
+\end{equation*}
+where $m_i \in \Rv{}$ is the mass, $c_i \in \Rv{3}$ is the CoM, $I_i \in \Rm{3}{3}$ is the 3D rotational inertia matrix.
+Both $c_i$ and $I_i$ are expressed in the local reference frame of the link.
+Note that $\phi_i$ does not contain directly $c_i$, but it contains only its product with $m_i$.
+This is because the robot dynamics can be written in a linear form with respect to this parameterization of the inertial parameters~\cite{Traversaro2015}.
+
+Now we can collect the inertial parameters of all the $N$ links of the robot in a single vector:
+\begin{equation*}
+\phi = (\phi_1, \dots, \phi_N)
+\end{equation*}
+We assume that each link parameters $\phi_i$ are not known exactly, but we know that they lie inside a polytope $U_i$, i.e. $\phi_i \in U_i$.
+Hence also the vector $\phi$ lies inside a polytope:
+$$
+\phi \in U = U_1 \times \dots \times U_N
+$$
+Note that since a polytope can be represented by a set of linear inequalities, the constraint $\phi_i \in U_i$ can be expressed under the form $A_i \phi_i \le a_i$. Now that we defined the inertial parameters and the associated uncertainty polytopes, we can see how these uncertainties affect the controller.
+\subsection{Task-Space Inverse Dynamics}
+The controller that we consider in this work is an optimization-based inverse dynamics controller, which computes the desired torques taking into account the dynamcis of the robot. It has become a standard for the control of legged robots in recent years~\cite{DelPrete2014c,Herzog2016,Sentis2004,Saab2011}. Table \ref{table:simu_params} shows TSID outperforming other control frameworks.
+Theortically, the kinematics and dynamics are decoupled. Kinematic level task prioritization is done first to compute acceleration and the torques are calculated to achieve the computed accelerations. 
+\begin{table}[bh] 
+\caption{Comparison of Control Frameworks\cite{DelPrete2014c}}
+\centering 
+\begin{tabular}{|p{3.5cm} | p{1.2cm} p{1.2cm} p{1.2cm} p{1.2cm} p{1.4cm} p{1.1cm}|}
+\hline 
+	Framework		& Optimal & Efficient & Force& Under & Inequality & Output \\ 
+ 	& & & Control & actuated& &  \\ \rowcolor[gray]{.9}   
+\hline 
+	TSID\cite{DelPrete2014c}& $\times$ & $\times$ & $\times$ & $\times$ & & $\tau$ \\
+	UF\cite{Peters2007}		&  & $\times$ & $\times$ &  & & $\tau$ \\  \rowcolor[gray]{.9}
+	WBCF\cite{Sentis2005}	& $\times$ &  & $\times$ & $(\times)$ &  & $\tau$\\ 
+	\cite{Mistry2011}		&  & & $\times$ & $\times$ & & $\tau$ \\ \rowcolor[gray]{.9}
+	SoT\cite{Saab2011}		& $\times$ &  & $\times$ & $\times$ & $\times$& $\tau$ \\  
+	\cite{DeLasa2009}		& $\times$ & &$\times$& $\times$ &  & $\tau$ \\  \rowcolor[gray]{.9}
+	\cite{Jeong2009}		& $\times$ & $\times$ &  &  & & $\tau/\ddot{q}$ \\      
+	\cite{nakamura1987task}		& & $\times$ &  &  & & $\dot{q}/\ddot{q}$ \\ \rowcolor[gray]{.9}
+    	\cite{Chiaverini1997}		& & $\times$ &  &  & & $\dot{q}$ \\ 
+	\cite{siciliano1991general}	& $\times$ & $\times$ &  &  & & $\dot{q}$ \\  \rowcolor[gray]{.9}
+
+	\cite{Baerlocher1998}		& $\times$ & $\times$ &  &  & & $\dot{q}$ \\  
+	\cite{Smits2008}		& $\times$ & $\times$ &  &  & $\times$& $\dot{q}$ \\   \rowcolor[gray]{.9}        
+%	$K_p^{reach}$ 	& Reaching proportional gain 	& $20-80$ \\ \rowcolor[gray]{.9}
+%	$K_p^{post}$ 	& Posture proportional gain 	& $20$ \\
+[0.5ex] \hline 
+\end{tabular} 
+\label{table:simu_params} %\bigskip
+\end{table}
+% \explainmore{The generic method proposed in this thesis is based on the inverse-dynamics model of the robot considering contact constraints and a set of tasks specified with a given priority. The resolution for each task is posed as a minimization problem, subject to several constraints that ensure dynamic feasibility, and uses a hierarchical scheme based on hierarchized QPs. Since the motion is generated using several prioritized tasks, and the dynamic model of the robot is taken into account, the term Dynamic Stack of Tasks (SoT) is sometimes used to refer to the framework. With respect to other operational-space inversedynamics (OSID) approaches, the advantages of the proposed method are the capability to handle both equality and inequality constraints at any level of the hierarchy, the fast computation time that allows it execution in real-time, and the direct feasibility of the generated motion, which does not need any further processing or validation before being executed on the robot.}
+Various formulations of the TSID optimization problem exist and are often equivalent or similar~\cite{DelPrete2014c}.
+We write it here as an optimization problem of the base and joint accelerations $\dot{v} \in \Rv{n+6}$, the contact forces \mbox{$f\in \Rv{k}$}, and the joint torques $\tau \in \Rv{n}$~\cite{Saab2013}:
+\begin{subequations} 
+\label{eq:TSID}
+\begin{align}
+\minimize_{y=(\dot{v}, f, \tau)} \quad &|| A y - a||^2 \nonumber\\
+\st \quad & \mat{M(\phi) & -J_c^\TS & -S^\TS \\ J_c & 0 & 0} \mat{\dot{v} \\ f \\ \tau} = \mat{- h(\phi) \\ -\dot{J}_c v} \nonumber\\
+& | \tau | \le \tau^{max} \label{eq:TSID_torque_lim}\\
+& \dot{v}^{min} \le \dot{v} \le \dot{v}^{max} \label{eq:TSID_acc_lim}\\
+& f \in \mathcal{K} \label{eq:TSID_force_lim}
+\end{align} 
+\end{subequations}
+where \mbox{$J_c \in \Rm{k}{(n+6)}$} is the constraint Jacobian, $M \in \Rm{(n+6)}{(n+6)}$ is the mass matrix, $h \in \Rv{n+6}$ contains the bias forces, $S\in \Rm{n}{(n+6)}$ is the selection matrix, $\tau^{max} \in \Rv{n}$ are the maximum joint torques, $\dot{v}^{min/max} \in \Rv{n+6}$ are the acceleration bounds\footnote{The bounds of the joint positions and velocities are typically converted into joint-acceleration bounds~\cite{Padois2010}}, and $\mathcal{K}$ is the force friction cone (which is typically linearized).
+The cost function represents the error of the task, which is typically an affine function of $\dot{v}$ (i.e. a task-space acceleration):
+\begin{equation*} \begin{aligned}
+\underbrace{\mat{J_{task} & 0 & 0}}_A y - \underbrace{(\ddot{x}_{task}^{des} - \dot{J}_{task} v)}_a = \ddot{x}_{task} - \ddot{x}_{task}^{des}
+\end{aligned} \end{equation*}
+The task may be to track a predefined trajectory of a link, of the CoM of the robot, or to regulate the robot angular momentum.
+
+\subsection{Capture Point}
+Regardless of the task they are performing, legged robots must take care of balancing (i.e. avoiding to fall) at the same time.
+Balancing is fundamental for legged robots and it has been extensively studied~\cite{Collette2008,Morisawa2012,Goswami2004,Hyon2006,Sherikov}.
+This problem is particularly well understood for robots in contact with a flat terrain only.
+In this case, the dynamics of the robot CoM $c$ is well approximated by a linear inverted pendulum.
+In this model the robot is approximated as a point mass (maintained at a constant height) supported by a variable-length leg link~\cite{Pratt2006}.
+The resulting dynamics is:
+\begin{equation*}
+\ddot{c}^{xy}(\phi) = \omega(\phi)^2 (c^{xy}(\phi) - u),
+\end{equation*}
+where $u \in \Rv{2}$ is the ZMP, which is equivalent to the center of pressure~\cite{Wieber2002}, and \mbox{$\omega(\phi) = \sqrt{\frac{g}{c^z(\phi)}}$}.
+The same dynamics can also be obtained from the real dynamics of the robot CoM, by assuming that $\dot{c}^z=0$ and the rate of change of the robot angular momentum is null~\cite{Wieber}.
+Using this linear dynamics we can compute the point on the ground where the robot can put its ZMP to in order to stop its CoM:
+\begin{equation*}
+\xi(\phi) = c^{xy}(\phi) + \frac{\dot{c}^{xy}(\phi)}{\omega(\phi)}
+\end{equation*}
+This point is known as the capture point~\cite{Pratt2006}, the divergent component of motion or the extrapolated CoM ~\cite{Wieber}.
+
+\subsection{Capture-Point Balance Constraints}
+Originally, the capture point was used to decide where to make the robot step in order to recover from a push~\cite{Pratt2006}.
+More recently, Ramos et al.~\cite{Ramos2014a} proposed use it to ensure the balance of the robot.
+The key idea is that, as long as the capture point remains inside the convex hull of the contact points (i.e. the so-called \emph{support polygon} $\mathcal{S}$), the robot can balance without taking a step. 
+To ensure the balance of the robot we can then add to \eqref{eq:TSID} another set of inequalities to constrain the capture point to remain inside the support polygone:
+$$
+B (\xi(\phi) + \dt \dot{\xi}(\phi))  \le b,
+$$
+where $\dot{\xi}(\phi) \in \Rv{2}$ is the time derivative of the capture point, and the matrix $B$ and the vector $b$ define the support polygon (i.e. $B x \le b \Longleftrightarrow x \in \mathcal{S}$).
+By expressing $\xi$ and its derivative as functions of $c^{xy}$ and its derivatives we get:
+\begin{align*}
+B \left ( c^{xy}(\phi) + \frac{\dot{c}^{xy}(\phi)}{\omega(\phi)} + \dt \left( \dot{c}^{xy}(\phi) + \frac{\ddot{c}^{xy}(\phi)}{\omega(\phi)} \right) \right)  \le b \\
+B \left ( c^{xy}(\phi) + \alpha(\phi) \dot{c}^{xy}(\phi) + \frac{\dt}{\omega(\phi)} \ddot{c}^{xy}(\phi) \right)  \le b,
+\end{align*}
+where $\alpha(\phi) = \dt + \omega(\phi)^{-1}$.
+Finally we can express the CoM acceleration $\ddot{c}^{xy}$ as a function of the joint accelerations $\dot{v}$:
+\begin{equation} \label{eq:cp_ineq}
+D(\phi) \dot{v} + B \left (c^{xy}(\phi) + \alpha(\phi) \dot{c}^{xy}(\phi) + \beta(\phi) \right ) \le b,
+\end{equation}
+where: 
+\begin{align*}
+D(\phi) &= \frac{\dt}{\omega(\phi)} B J_{com}(\phi) \\
+\beta(\phi) &= \frac{\dt}{\omega(\phi)} \dot{J}_{com}(\phi) v
+\end{align*}
+These inequalities are linear with respect to the joint accelerations $\dot{v}$, so they can be added to the QP problem \eqref{eq:TSID} to ensure the robot balance in case of no modeling uncertainties.
+
+
+
+\section{Robustness to Inertial Parameter Errors}
+\label{sec:robustness}
+In the previous section we saw that the inertial parameters appear in three different locations in the controller optimization problem \eqref{eq:TSID}: i) in the mass matrix $M$, ii) in the bias forces $h$, and iii) in the capture-point inequalities \eqref{eq:cp_ineq}.
+Unfortunately $M$ and $h$ depend on $\phi$ in a highly-nonlinear way, so it is hard to deal with it.
+In this work we deal instead with the dependency of the capture-point inequalities \eqref{eq:cp_ineq} on the inertial parameters.
+More in details, many terms in \eqref{eq:cp_ineq} depend on $\phi$, but we will focus on the dependency of the CoM xy coordinates on $\phi$.
+In other words, we want to solve this optimization problem:
+\begin{subequations} 
+\label{eq:rob_TSID}
+\begin{align} 
+\minimize_{y=(\dot{v}, f, \tau)} \quad &|| A y - a||^2 \nonumber \\
+\st \quad & \mat{M(\hat{\phi}) & -J_c^\T & -S^\T \\ J_c & 0 & 0} \mat{\dot{v} \\ f \\ \tau} = \mat{- h(\hat{\phi}) \\ -\dot{J}_c v} \\
+& \eqref{eq:TSID_torque_lim}, \eqref{eq:TSID_acc_lim}, \eqref{eq:TSID_force_lim} \nonumber \\
+& D(\hat{\phi}) \dot{v} + B c^{xy}(\phi) \le \bar{b}(\hat{\phi}) \quad \forall \phi \in U, \label{eq:rob_TSID_cp}
+\end{align} 
+\end{subequations}
+where $\hat{\phi}$ are the nominal inertial parameters (i.e. those used by the standard controller) and:
+$$
+\bar{b}(\hat{\phi}) = b - B (\alpha(\hat{\phi}) \dot{c}^{xy}(\hat{\phi}) + \beta(\hat{\phi}))
+$$
+Problem \eqref{eq:rob_TSID} is not tractable because it has an infinite number of inequality constraints due to the capture-point inequalities that need to be satisfied for all the possible values of $\phi$.
+In order to solve \eqref{eq:rob_TSID} we need to reformulate it in a tractable form.
+To do that, we will start by analyzing the relationship between $c^{xy}$ and $\phi$ (which is linear).
+Then we will show how to reformulate the robust capture-point inequalities \eqref{eq:rob_TSID_cp} in a tractable form.
+
+\subsection{Dependency of CoM on Inertial Parameters}
+The CoM of the robot is the average of the CoM of all its links, weighted by their respective masses:
+\begin{equation} \label{eq:com} \begin{aligned}
+c^{xy} &= P \frac{ \sum_{i=1}^{N} m_i (p_i + {}^wR_i {}^ic_i) }{m_{tot}} \\
+       &= \sum_{i=1}^{N} \underbrace{m_{tot}^{-1} P \mat{p_i & {}^wR_i & 0_{3\times 6}}}_{F_i} \phi_i \\
+       &= \mat{F_1 & \dots & F_N} \phi = F \phi,
+\end{aligned} \end{equation}
+where  $P= {\tiny\mat{1&0&0\\0&1&0}}$, $p_i \in \Rv{3}$ is the position of the reference frame of link $i$ expressed in the world frame, ${}^wR_i \in \R{3}{3}$ is a rotation matrix from link $i$ reference frame to the world frame, and $m_{tot}$ is the total mass of the robot.
+From \eqref{eq:com} we can see that the robot CoM is the ratio of two linear functions of the inertial parameters because $m_{tot}$ is clearly a linear function of $\phi$.
+However, given that we can easily know the robot total mass, we can assume that the uncertainty in $m_{tot}$ be negligible.
+In the context of robustness we can thus consider $c^{xy}$ as a linear function of $\phi$.
+
+\subsection{Robust Capture-Point Inequalities}
+Now we want to reformulate the robust capture-point inequalities into a tractable form.
+We can start by rewriting the $i$-th line of \eqref{eq:rob_TSID_cp} using \eqref{eq:com}:
+\begin{align*}
+D_i \dot{v} + B_i F \phi \le \bar{b}_i \qquad \forall \phi \in U,
+\end{align*}
+where $D_i, B_i$ and $\bar{b}_i$ are the $i$-th lines of the associated matrix/vector, and we dropped the dependency on the nominal inertial parameters $\hat{\phi}$ for the sake of readability.
+We can get rid of the quantifier operator $\forall$ by replacing the uncertain term with its maximum:
+\begin{align}
+D_i \dot{v} + \max_{\phi \in U} (B_i F \phi) \le \bar{b}_i
+\end{align}
+We could compute the maximum of $B_i G \phi$ under the constraint of $\phi$ belonging to the polytope $U$ by solving a Linear Program (LP) for each capture-point inequality.
+However, that would be too computationally expensive for a controller that typically has to run at 1 kHz because of the size of the LP (i.e. $10N$ variables and even more constraints).
+Luckily we show now that we can solve this LP by solving $N$ LPs of much smaller size.
+\begin{align}
+\max_{\phi \in U}  B_i F \phi = \max_{\phi \in U}  \sum_{j=1}^N B_i F_j \phi_j = 
+\sum_{j=1}^N \max_{\phi_j \in U_j} B_i F_j \phi_j
+\end{align}
+Thanks to this reformulation, rather than maximizing a linear function of the robot CoM, we can maximize a linear function of each link CoM.
+This boils down to finding, for each link, the CoM position that maximizes the dot product with the vector $B_i$.
+If the polytope of possible CoM positions has not many vertices, this optimization can be performed by enumeration.
+This means that we can compute the dot product of $B_i$ with all the vertices of the CoM polytope and then take the one that resulted in the largest value.
+Since the vertices of the CoM polytope of each link can be computed offline before starting the controller, this operation is extremely computationally efficient.
+If we assume that each CoM polytope has $n_v$ vertices and that the support polygone has $n_s$ sides, the computation of $\max_{\phi \in U}  B_i F \phi$ for all  $i$ requires $n_s n_v N$ dot products of 3D vectors.
+For a typical scenario of $n_s=6$, $n_v=10$ and $N=30$, this gives 1800 dot products.
+On a standard computer this would take only a few microseconds, so it is suitable for real-time control on a real robot.
+
+Once this quantity has been computed, the robust capture-point inequalities \eqref{eq:rob_TSID_cp} can be written as standard linear inequalities and problem \eqref{eq:rob_TSID} can be solved by a standard QP solver.
+
+

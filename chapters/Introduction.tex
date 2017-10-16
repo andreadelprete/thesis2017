@@ -1,0 +1,35 @@
+\ifdefined\included
+\else
+\documentclass[a4paper,11pt,twoside]{StyleThese}
+\include{formatAndDefs}
+\sloppy
+\begin{document}
+\fi
+
+\chapter*{Introduction}
+\addstarredchapter{Introduction} 
+Autonomy is undoubtedly the main goal in Robotics. We just want the robots to be self-reliant and the backing technologies to be as generic as possible. Every incremental research in robotics  directly or indirectly strives to automatize certain processes or mechanisms that solve a problem of physical interaction efficiently and effectively. Though it is controversial to talk about the need of such autonomy in robots, it is an undeniable fact that the research tries to solve robotic problems using algorithms with genericness and self-reliance. Autonomy is not only about the robot having higher awareness about itself and the environment in ideal conditions but the other way around. Developing algorithms with an ability to change, adapt or be flexible is the core problem of establishing autonomy in robots. 
+
+Industrial robots work in static settings and they literally do what it is programmed for specific use-cases, though the robots are flexible enough to be programmed for a variety of tasks. This research work makes an attempt to address these issues that separate both these settings in a profound way with special focus on uncertainties and variability. Lack of precise sensing abilities lead to a variety of uncertainties in scenarios where the robot is mobile or the environment is dynamic. This work focuses on developing smart strategies to improve the ability to handle uncertainties robustly in humanoid and industrial robots. The contributions of this thesis are:
+\begin{itemize}
+    \item A strategy to model uncertainties of the inertial parameters of a robot for a humanoid robot specific to balancing task scenarios.
+    \item A dynamic obstacle avoidance framework proposed for industrial robots equipped with skin sensors for reactivity. 
+\end{itemize}
+
+\input{chapters/intro/industrial-robots.tex}
+\input{chapters/intro/humanoid-robots.tex}
+\input{chapters/intro/control-methodologies.tex}
+
+\section{Chapter Organization}
+The thesis has two main chapters \ref{chapter:framework} and \ref{chapter:rc} describing the two main contributions of this thesis respectively. Chapter \ref{chapter:framework} presents the dynamic obstacle framework developed on industrial robots for collision avoidance using proximity information from skin sensors and point cloud information from 3d cameras. The Chapter \ref{chapter:rc} presents the strategy used to model inertial uncertainties to perform robust balancing. Chapter 5 concludes the thesis with important comments on the contributions and the possible future work connected to it.
+\section{Publications}
+\begin{itemize}
+\item Giftsun, N., Prete, A. Del, \& Lamiraux, F. (2017). \textit{Robustness to Inertial Parameter Errors for Legged Robots Balancing on Level Ground.} International Conference on Informatics in Control, Automation and Robotics (ICINCO) \textbf{[CONFERENCE]}.
+\item Bharatheesha, M., Giftsun, N., Hernandez, C., Bergner, F., Dean-leon, E., \& Cheng, G. (2017). \textit{Dynamic Obstacle Avoidance for Collaborative Robot Applications.} IEEE International Conference on Robotics and Automation (ICRA)\textbf{[WORKSHOP]}.
+\end{itemize}
+\ifdefined\included
+\else
+\bibliographystyle{acm}
+\bibliography{These}
+\end{document}
+\fi

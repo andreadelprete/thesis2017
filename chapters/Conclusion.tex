@@ -1,0 +1,84 @@
+\ifdefined\included
+\else
+\documentclass[a4paper,11pt,twoside]{StyleThese}
+\include{formatAndDefs}
+\sloppy
+\begin{document}
+\setcounter{chapter}{2}
+\fi
+
+\chapter*{Conclusion}
+\addstarredchapter{Conclusion} %Sinon cela n'apparait pas dans la table des matières
+It is very clear robustness in robotic control is quite an essential aspect that has been given less importance in experimental robotics. Both the contributions addressed the issues of handling uncertainties and variability in robotic control in different platform and in different settings. This thesis illustrates the application of the contributed strategies in both industrial and humanoid robots to avoid robot and task failures. 
+\section{Dynamic Obstacle Avoidance}
+The first contribution is a framework that augments robot manipulators with dynamic obstacle avoidance functionality to become collaborative with human beings. The framework uses proximity skin sensors to sense the distance between the local sensor positions on the arm and the obstacles. The dense proximity information around the arm gives way to be reactive in robot's workspace. The kinect based reactive planner along with the reactive controller allows to handle obstacles dynamically with  point cloud and proximity information. These heterogenous components are integrated within ROS middleware framework to establish control in Universal Robot UR5. The preliminary tests are conducted in simulation and there is an ongoing effort to demonstrate the dynamic obstacle avoidance behavior in a real robot setup shown in Fig.\ref{fig:TUDSetup}. 
+
+
+The reactive controller uses the state of the art hierarchical QP based optimization solver which makes it efficient to be used in real time. The tasks are programmed systematically to execute the planned trajectory while it avoids the potential collisions either by the virtue of the higher priority collision avoidance task or replan a new trajectory when the robot hits a local minima. 
+
+
+The integration and installation of advanced functionalities such as the dynamic
+obstacle avoidance solution presented poses three main challenges from the
+software point of view. The first is the integration of different components such as the skin driver, path planner and robot motion control. We address this challenge by adhering to the software development paradigm of the ROS-Industrial initiative. All the components discussed in this paper have been successfully integrated with ROS.
+
+A second challenge is the quality assurance and robustness of the integrated robot software. This is crucial in production environments, and is specially important in collaborative applications, where safety needs to be guaranteed. For this purpose an Automated testing Framework (ATF) has been developed \cite{Weisshardt-2016} as a part of the FiaD prohect, which
+allows for the systematic testing of robot software components, which includes unit
+ testing, simulation-in-the-loop testing and eventually hardware-in-the-loop testing.
+The tests can be automated and integrated in a centralized continuous
+integration system. Preliminary test have already been conducted with the
+components of the robot software system of this work, and the integrated
+prototype applications will be tested with ATF.
+
+Finally, the third challenge is the deployment of the software. One of the main barriers to transfer solutions based on robot frameworks such as ROS to industry, and specially SMEs, is how cumbersome it is
+to deploy. As a part of the FiaD project, a Robot deployment toolbox has been developed \cite{Ludtke-2017}, based on ROS, which can also be integrated with ATF. The deployment tools will also be evaluated on the RBE17 prototype.
+
+\begin{figure*}[!h]
+\centering
+\begin{subfigure}
+[PR2 Robot]{\includegraphics[width=5.5cm,height=6cm]{doa/images/pr2_1.png}}
+\end{subfigure}\quad
+\begin{subfigure}
+[TOMM Setup]{\includegraphics[width=5.5cm,height=6cm]{doa/images/tomm_replan.png}}\quad
+\end{subfigure}
+\caption{Preliminary tests done in simulation and robot}
+\label{fig:conclusion_tests}
+\end{figure*}
+% \begin{figure*}[!h]
+% \centering
+% {\includegraphics[scale=0.5]{rc_inertial_params/final.png}}
+% \caption{Robust Control}
+% \label{fig:robc}
+% \end{figure*}
+
+
+
+\section{Robust Controller}
+The second contribution is a strategy to model inertial uncertainties indirectly in the capture-point inequality constraint within the Task Space Inverse Dynamics framework. The capture-point constraint takes care of the balancing in this framework and modeling uncertainties in this constraint makes the controller robust to inertial errors of the robot model.  
+
+\begin{figure*}[!h]
+\centering
+\begin{subfigure}
+[Classic Controller]{\includegraphics[scale=0.22]{rc_inertial_params/classic.png}}
+\end{subfigure}\quad
+\begin{subfigure}
+[Robust Controller]{\includegraphics[scale=0.22]{rc_inertial_params/robust.png}}
+\end{subfigure}\quad
+\caption{Reaching Task under Inertial Uncertainties}
+\label{fig:robc}
+\end{figure*}
+
+In the derivation of the robust controller we saw that the inertial parameters appear in different terms of the optimization problem.
+In this preliminary work we focused only on how the uncertainties affect the CoM position.
+We believe it should be possible to extend this analysis to the other terms in the capture-point inequalities: CoM velocity, CoM altitude, CoM Jacobian and its time derivative. 
+Extending it also to the mass matrix and the bias forces is an interesting future direction, but it seems more challenging because of nonlinearities.
+
+Another issue of the presented approach is that it is rather conservative and this can lead to poor performance, which can be unacceptable on a real system. Modeling uncertainties with probability distributions (rather than with polytopes) may lead to a less conservative behavior of the system, and it is thus an interesting future direction. In ~\cite{DelPrete2015b}, the proposed controller was robust to joint-torque tracking errors. Integrating the two controllers together seems to be feasible and it would provide robustness to both kinds of uncertainties. In this preliminary work we focused on simulations to validate the controller formulation and to test it with different parameter errors. Of course, we plan also to test the generated movements on the real HRP-2 robot, to quantify how much it can benefit from this robustness.
+
+
+
+\ifdefined\included
+\else
+\bibliographystyle{acm}
+\bibliography{These}
+\end{document}
+\fi
